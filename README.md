@@ -12,7 +12,7 @@ ___TO-DO tracker app___
 <!-- -->
 3. скачать необходимыe пакеты <br>
 <!-- -->
-```(в папке todo_project) pip install -r requirements.txt ```
+```(в папке to_do_tracker) pip install -r requirements.txt ```
 <!-- -->
 4. Запустить сервер  <br>
 <!-- -->
