@@ -1,16 +1,12 @@
 from django.urls import path
-from .views import TaskViewSet, DailyMoodViewSet, MoodViewSet, ImageViewSet
+from .views import image_list, task_list, daily_mood_list, mood_list, register, login, list_users
 
 urlpatterns = [
-    path('tasks/', TaskViewSet.as_view({'get': 'list', 'post': 'create'}), name='task-list'),
-    path('tasks/<int:pk>/', TaskViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='task-detail'),
-    
-    path('daily_moods/', DailyMoodViewSet.as_view({'get': 'list', 'post': 'create'}), name='daily-mood-list'),
-    path('daily_moods/<int:pk>/', DailyMoodViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='daily-mood-detail'),
-    
-    path('moods/', MoodViewSet.as_view({'get': 'list', 'post': 'create'}), name='mood-list'),
-    path('moods/<int:pk>/', MoodViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='mood-detail'),
-    
-    path('images/', ImageViewSet.as_view({'get': 'list', 'post': 'create'}), name='image-list'),
-    path('images/<int:pk>/', ImageViewSet.as_view({'get': 'retrieve', 'put': 'update', 'delete': 'destroy'}), name='image-detail'),
+    path('moods/', mood_list, name='mood-list'),
+    path('images/', image_list, name='image-list'),
+    path('tasks/', task_list, name='task-list'),
+    path('daily_mood/', daily_mood_list, name='daily-mood-list'),
+    path('register/', register, name='register'),
+    path('login/', login, name='login'),
+    path('users/', list_users, name='list_users')
 ]
