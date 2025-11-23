@@ -9,4 +9,5 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login, name='login'),
     path('users/', list_users, name='list_users')
+    
 ]

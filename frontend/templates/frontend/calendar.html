@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Задачи на месяц</title>
+
+    <link rel="stylesheet" href="{% static 'frontend/css/calendar.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marmelad&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Левое меню -->
+    <div class="sidebar">
+      <img
+        src="{% static 'frontend/images/logobig.svg' %}"
+        alt="Logo"
+        class="logo"
+      />
+
+      <!-- Меню: все кнопки в одном контейнере -->
+      <div class="menu">
+        <a href="{% url 'profile' %}">
+          <img
+            src="{% static 'frontend/images/home.svg' %}"
+            alt="Home"
+            class="menu-icon"
+          />
+        </a>
+
+        <a href="{% url 'todo' %}">
+          <img
+            src="{% static 'frontend/images/todo.svg' %}"
+            alt="ToDo"
+            class="menu-icon"
+          />
+        </a>
+
+        <a href="{% url 'mood' %}">
+          <img
+            src="{% static 'frontend/images/mood.svg' %}"
+            alt="Mood"
+            class="menu-icon"
+          />
+        </a>
+
+        <h2 class="sidebar-title">Твои дела</h2>
+      </div>
+
+      <!-- кот под меню -->
+      <img
+        src="{% static 'frontend/images/catcalendar.svg' %}"
+        alt="Cat Calendar"
+        class="menu-cat"
+      />
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-content">
+      <div class="month-header">
+        <h1 class="page-title">Задачи на месяц</h1>
+        <button class="month-btn">
+          <span class="arrow">&#9664;</span>
+          <!-- треугольник влево -->
+          <span>Октябрь</span>
+          <span class="arrow">&#9654;</span>
+          <!-- треугольник вправо -->
+        </button>
+      </div>
+
+      <div class="calendar-outer">
+        <div class="calendar-inner">
+          <div class="calendar-grid">
+            <div class="weekdays">
+              <div>Пн</div>
+              <div>Вт</div>
+              <div>Ср</div>
+              <div>Чт</div>
+              <div>Пт</div>
+              <div>Сб</div>
+              <div>Вс</div>
+            </div>
+            <div class="days"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>© 2025 To-Do Mood Tracker</p>
+    </footer>
+
+    <script src="{% static 'frontend/js/calendar.js' %}"></script>
+  </body>
+</html>

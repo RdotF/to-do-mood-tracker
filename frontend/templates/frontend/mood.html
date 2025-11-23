@@ -1,0 +1,113 @@
+{% load static %} <!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Настроение</title>
+    <link rel="stylesheet" href="{% static 'frontend/css/mood.css' %}" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marmelad&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Левое меню -->
+    <div class="sidebar">
+      <img
+        src="{% static 'frontend/images/logobig.svg' %}"
+        alt="Logo"
+        class="logo"
+      />
+      <!-- Кнопка на профиль -->
+      <a href="{% url 'profile' %}">
+        <img
+          src="{% static 'frontend/images/home.svg' %}"
+          alt="Home"
+          class="menu-icon"
+        />
+      </a>
+      <!-- Активная страница -->
+      <h2 class="sidebar-title">Настроение</h2>
+      <!-- Остальные страницы -->
+      <div class="menu">
+        <a href="{% url 'todo' %}">
+          <img
+            src="{% static 'frontend/images/todo.svg' %}"
+            alt="ToDo"
+            class="menu-icon"
+          />
+        </a>
+        <a href="{% url 'calendar' %}">
+          <img
+            src="{% static 'frontend/images/calendar.svg' %}"
+            alt="Calendar"
+            class="menu-icon"
+          />
+        </a>
+      </div>
+      <!-- кот под меню -->
+      <img
+        src="{% static 'frontend/images/catmood.svg' %}"
+        alt="Cat Mood"
+        class="menu-cat"
+      />
+    </div>
+    <!-- Основной контент -->
+    <div class="main-content">
+      <h1 class="page-title">Настроение дня</h1>
+      <div class="date-row">
+        <div class="day-box">Понедельник</div>
+        <div class="date-box">18.10</div>
+      </div>
+      <div class="mood-section">
+        <div class="mood-left">
+          <h2 class="mood-question">
+            Как твоё<br />
+            настроение<br />
+            сегодня?
+          </h2>
+          <div class="mood-buttons">
+            <img
+              src="{% static 'frontend/images/happy.svg' %}"
+              alt="Happy"
+              class="mood-btn"
+            />
+            <img
+              src="{% static 'frontend/images/excited.svg' %}"
+              alt="Excited"
+              class="mood-btn"
+            />
+            <img
+              src="{% static 'frontend/images/calm.svg' %}"
+              alt="Calm"
+              class="mood-btn"
+            />
+            <img
+              src="{% static 'frontend/images/anxious.svg' %}"
+              alt="Anxious"
+              class="mood-btn"
+            />
+            <img
+              src="{% static 'frontend/images/angry.svg' %}"
+              alt="Angry"
+              class="mood-btn"
+            />
+            <img
+              src="{% static 'frontend/images/sad.svg' %}"
+              alt="Sad"
+              class="mood-btn"
+            />
+          </div>
+        </div>
+        <div class="mood-right">
+          <div class="mood-inner">
+            <h3 class="mood-placeholder">Тут скоро что-то появится</h3>
+            <img id="mood-image" class="hidden" alt="Mood Image" />
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer><p>© 2025 To-Do Mood Tracker</p></footer>
+    <script src="{% static 'frontend/js/mood.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,49 @@
+{% load static %}
+<div class="overlay edit-overlay">
+  <div class="popup">
+    <!-- Верхняя панель -->
+    <div class="popup-header">
+      <img
+        src="{% static 'frontend/images/logo.svg' %}"
+        alt="Logo"
+        class="logo"
+      />
+      <button class="close-btn" type="button">×</button>
+    </div>
+
+    <!-- Фото -->
+    <div class="photo-placeholder"><span>Место для вашего фото</span></div>
+
+    <!-- Форма -->
+    <form class="form">
+      <div class="input-group">
+        <input type="text" placeholder="Имя" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+
+      <div class="input-group">
+        <input type="text" placeholder="Логин" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+
+      <div class="input-group">
+        <input type="password" placeholder="Пароль" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+
+      <button type="submit" class="btn-save">Сохранить</button>
+    </form>
+  </div>
+</div>

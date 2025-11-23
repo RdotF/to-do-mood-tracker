@@ -1,0 +1,47 @@
+{% load static %}
+<div class="overlay">
+  <div class="popup">
+    <!-- Верхняя панель -->
+    <div class="popup-header">
+      <img
+        src="{% static 'frontend/images/logo.svg' %}"
+        alt="Logo"
+        class="logo"
+      />
+      <button class="close-btn">×</button>
+    </div>
+    <!-- Основной контент -->
+    <h2 class="popup-title">Мы очень хотим с<br />Вами познакомиться!</h2>
+    <!-- Фото -->
+    <div class="photo-placeholder"><span>Место для вашего фото</span></div>
+    <!-- Поля формы -->
+    <form class="form">
+      <div class="input-group">
+        <input type="text" placeholder="Имя" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+      <div class="input-group">
+        <input type="text" placeholder="Логин" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+      <div class="input-group">
+        <input type="password" placeholder="Пароль" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+      <!-- Кнопка -->
+      <button type="submit" class="btn-register">Зарегистрироваться</button>
+    </form>
+  </div>
+</div>
