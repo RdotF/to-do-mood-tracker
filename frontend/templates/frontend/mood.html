@@ -56,9 +56,9 @@
     <div class="main-content">
       <h1 class="page-title">Настроение дня</h1>
       <div class="date-row">
-        <div class="day-box">Понедельник</div>
-        <div class="date-box">18.10</div>
-      </div>
+<div class="day-box">{{ today_weekday }}</div>  <!-- день недели -->
+  <div class="date-box">{{ today_date|date:"d.m" }}</div>  <!-- дата -->
+</div>
       <div class="mood-section">
         <div class="mood-left">
           <h2 class="mood-question">

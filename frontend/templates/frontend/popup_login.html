@@ -8,16 +8,18 @@
         alt="Logo"
         class="logo"
       />
-      <button class="close-btn">×</button>
+      <button type="button" class="close-btn">×</button>
     </div>
 
     <!-- Заголовок -->
     <h2 class="popup-title">Рады Вас видеть!</h2>
 
     <!-- Поля формы -->
-    <form class="form">
+    <form class="form" id="loginForm">
+      {% csrf_token %}
+
       <div class="input-group">
-        <input type="text" placeholder="Логин" />
+        <input type="text" name="username" placeholder="Логин" required />
         <img
           src="{% static 'frontend/images/pencil.svg' %}"
           alt="Edit"
@@ -25,13 +27,17 @@
         />
       </div>
       <div class="input-group">
-        <input type="password" placeholder="Пароль" />
+        <input type="password" name="password" placeholder="Пароль" required />
         <img
           src="{% static 'frontend/images/pencil.svg' %}"
           alt="Edit"
           class="icon"
         />
       </div>
+
+      <!-- Сообщения об ошибках -->
+      <div id="loginErrorMessages" class="error-messages" style="display: none;"></div>
+
       <!-- Кнопка -->
       <button type="submit" class="btn-login-submit">Войти</button>
     </form>

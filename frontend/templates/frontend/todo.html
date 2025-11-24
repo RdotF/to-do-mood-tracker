@@ -13,7 +13,12 @@
     />
   </head>
   <body>
-    <!-- Левое меню -->
+    <!-- Передаем данные пользователя -->
+    <div id="user-data"
+         data-user-id="{{ request.session.user_id }}"
+         style="display: none;">
+    </div>
+ <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
     <!-- Левое меню -->
     <div class="sidebar">
       <img
@@ -63,8 +68,8 @@
       <h1 class="page-title">Дела на сегодня</h1>
 
       <div class="date-row">
-        <div class="day-box">Пятница</div>
-        <div class="date-box">18.10</div>
+        <div class="day-box" id="currentDay">Пятница</div>
+        <div class="date-box" id="currentDate">18.10</div>
       </div>
 
       <div class="todo-section">

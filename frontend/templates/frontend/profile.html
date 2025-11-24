@@ -4,7 +4,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Личный кабинет</title>
+    <title>Личный кабинет - {{ username }}</title>
 
     <!-- Основные стили -->
     <link rel="stylesheet" href="{% static 'frontend/css/profile.css' %}" />
@@ -88,7 +88,7 @@
             />
           </button>
 
-          <button class="btn-logout">Выйти</button>
+          <button class="btn-logout" id="logoutBtn">Выйти</button>
         </div>
       </div>
 
@@ -96,12 +96,12 @@
       <div class="user-info">
         <img
           src="{% static 'frontend/images/photo-placeholder.svg' %}"
-          alt="Фото пользователя"
           class="user-photo"
         />
         <div class="user-text">
-          <h2 class="user-name">Имя Фамилия</h2>
-          <p class="user-login">@логин</p>
+          <!-- Реальные данные из сессии -->
+          <h2 class="user-name" id="usernameDisplay">{{ username|default:"логин" }}</h2>
+          <p class="user-login" id="emailDisplay">{{ email|default:"почта" }}</p>
         </div>
       </div>
 
@@ -110,6 +110,9 @@
       <!-- Статистика -->
       <div class="stats-frame">
         <p>Статистика настроения пользователя</p>
+        <div id="userStats">
+          <!-- Динамическая статистика будет здесь -->
+        </div>
       </div>
     </div>
 
@@ -119,6 +122,7 @@
     </footer>
 
     {% include 'frontend/popup_edit.html' %}
-    <script src="{% static 'frontend/js/popup_edit.js' %}"></script>
+    <script src="{% static 'frontend/js/profile.js' %}"></script>
+
   </body>
 </html>

@@ -13,6 +13,15 @@
     />
   </head>
   <body>
+    <!-- Передаем данные пользователя -->
+    <div id="user-data"
+         data-user-id="{{ request.session.user_id }}"
+         style="display: none;">
+    </div>
+
+    <!-- Скрытое поле с CSRF токеном -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
     <!-- Левое меню -->
     <div class="sidebar">
       <img
@@ -47,7 +56,7 @@
           />
         </a>
 
-        <h2 class="sidebar-title">Твои дела</h2>
+        <h2 class="sidebar-title">Календарь</h2>  <!-- Исправлено: убрано дублирование -->
       </div>
 
       <!-- кот под меню -->
@@ -65,7 +74,7 @@
         <button class="month-btn">
           <span class="arrow">&#9664;</span>
           <!-- треугольник влево -->
-          <span>Октябрь</span>
+          <span id="current-month-display">Месяц</span>  <!-- Добавлен ID для JS -->
           <span class="arrow">&#9654;</span>
           <!-- треугольник вправо -->
         </button>

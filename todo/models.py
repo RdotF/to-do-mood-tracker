@@ -29,6 +29,7 @@ class Image(models.Model):
     mood = models.ForeignKey(Mood, on_delete=models.CASCADE, related_name='images')
 
 class Task(models.Model):
+    id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
     due_date = models.DateField()
@@ -36,6 +37,7 @@ class Task(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
 
 class DailyMood(models.Model):
+    id = models.AutoField(primary_key=True)
     date = models.DateField()
     mood = models.ForeignKey(Mood, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='daily_moods')
