@@ -42,10 +42,19 @@ def profile(request):
         print(f"Error: {e}")  # Для отладки
         return redirect('/')
 def mood(request):
-    locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')  # Установите локаль для русского
-    today_date = date.today()
-    today_weekday = today_date.strftime("%A")  # Получаем день недели по-русски
-    return render(request, 'frontend/mood.html',  {'today_date': today_date, 'today_weekday': today_weekday})
+    user_id = request.session.get('user_id')
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    from todo.models import User
+    user = User.objects.get(id=user_id)
+    print(f"Found user: {user}")  # Для отладки
+    user_data = {
+        'username': user.username,
+        'email': user.email,
+        'user_id': user.id,
+    }
+    return render(request, 'frontend/mood.html', user_data)
 
 def todo(request):
     return render(request, 'frontend/todo.html')

@@ -18,6 +18,13 @@
   </head>
 
   <body>
+  <!-- Скрытый элемент с данными пользователя -->
+    <div id="user-data"
+         data-user-id="{{ user.id }}"
+         data-username="{{ user.username }}"
+         data-email="{{ user.email }}"
+         data-avatar-url="{{ user.get_absolute_avatar_url }}">
+    </div>
     <!-- Левое меню -->
     <div class="sidebar">
       <img
@@ -69,11 +76,11 @@
       <div class="header">
         <h1>Личный кабинет</h1>
         <div class="header-buttons">
-          <img
+          <!--<img
             src="{% static 'frontend/images/themesdark.svg' %}"
             alt="Themes"
             class="header-icon"
-          />
+          /> -->
 
           <!-- интерактивная кнопка -->
           <button
@@ -94,16 +101,20 @@
 
       <!-- Данные пользователя -->
       <div class="user-info">
+        <!-- Добавлен ID для обновления аватарки -->
         <img
-          src="{% static 'frontend/images/photo-placeholder.svg' %}"
+          src="{% if user.avatar %}{{ user.get_absolute_avatar_url }}{% else %}{% static 'frontend/images/themesdark.svg' %}{% endif %}"
           class="user-photo"
+          id="user-avatar"
+
         />
         <div class="user-text">
           <!-- Реальные данные из сессии -->
-          <h2 class="user-name" id="usernameDisplay">{{ username|default:"логин" }}</h2>
-          <p class="user-login" id="emailDisplay">{{ email|default:"почта" }}</p>
+          <h2 class="user-name" id="usernameDisplay">{{ user.username|default:"логин" }}</h2>
+          <p class="user-login" id="emailDisplay">{{ user.email|default:"почта" }}</p>
         </div>
       </div>
+
 
       <h2 class="week-subtitle">Вот как прошла твоя неделя</h2>
 

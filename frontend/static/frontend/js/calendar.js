@@ -58,15 +58,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Загружаем доступные настроения
     fetch('/api/moods/')
-      .then(response => {
-        if (!response.ok) throw new Error('Ошибка загрузки типов настроений');
-        return response.json();
-      })
-      .then(data => {
-        moods = data;
-        // После загрузки настроений загружаем изображения для них
-        return fetch('/api/images/');
-      })
+  .then(response => {
+    if (!response.ok) throw new Error('Ошибка загрузки типов настроений');
+    return response.json();
+  })
+  .then(data => {
+    moods = data;
+    console.log('Загруженные настроения из API:', moods); // ДОБАВЬТЕ ЭТУ СТРОКУ
+    // После загрузки настроений загружаем изображения для них
+    return fetch('/api/images/');
+  })
       .then(response => {
         if (!response.ok) throw new Error('Ошибка загрузки изображений');
         return response.json();
@@ -128,7 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (existingMood) {
       // Обновляем существующее настроение
-      return fetch(`/api/${daily_mood/existingMood.id}/`, { //TODO: НЕ ОБНОВЛЯЮТСЯ ПО ID ТАК КАК НЕТ VIEW ПО id
+      return fetch(`/api/daily_mood/${existingMood.id}/`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -427,16 +428,22 @@ document.addEventListener("DOMContentLoaded", () => {
    const moodFiles = [
     "happy.svg", "relaxed.svg", "sad.svg", "angry.svg", "excited.svg", "bored.svg"
   ];
-
- const moodNames = {
-  "happy.svg": "Счастливый",
-  "relaxed.svg": "Спокойный", // calm
-  "sad.svg": "Грустный",
-  "angry.svg": "Злой",
-  "excited.svg": "Взволнованный",
-  "bored.svg": "Тревожный" //anxious
+const moodFileMap = {
+    'happy': 'happy.svg',
+    'sad': 'sad.svg',
+    'bored': 'bored.svg',
+    'relaxed': 'relaxed.svg',
+    'angry': 'angry.svg',
+    'excited': 'excited.svg'
 };
-
+const moodDisplayNames = {
+    'happy': 'Счастливый',
+    'sad': 'Грустный',
+    'bored': 'Скучающий',
+    'relaxed': 'Расслабленный',
+    'angry': 'Злой',
+    'excited': 'Взволнованный'
+};
   // Показываем выбор настроения
   function showMoodSelection(day, date, moodElement) {
     // Создаем попап для выбора настроения
@@ -444,17 +451,21 @@ document.addEventListener("DOMContentLoaded", () => {
     popup.classList.add("mood-popup");
 
     const moodOptionsHTML = moodFiles.map(moodFile => {
-      return `
+        // Находим отображаемое имя для файла
+        const moodKey = Object.keys(moodFileMap).find(key => moodFileMap[key] === moodFile);
+        const moodName = moodDisplayNames[moodKey];
+
+        return `
         <div class="mood-option" data-mood-file="${moodFile}">
-          <img src="/static/frontend/images/${moodFile}" alt="${moodNames[moodFile]}">
-          <span>${moodNames[moodFile]}</span>
+            <img src="/static/frontend/images/${moodFile}" alt="${moodName}">
+            <span>${moodName}</span>
         </div>
-      `;
+        `;
     }).join('');
 
     popup.innerHTML = `
       <div class="mood-popup-content">
-        <h3>Выберите настроение для ${day}.${currentMonth}.</h3>
+        <h3>Выберите настроение для ${day}.${currentMonth + 1}.</h3>
         <div class="mood-options">
           ${moodOptionsHTML}
         </div>
@@ -466,113 +477,133 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Обработчики для выбора настроения
     popup.querySelectorAll(".mood-option").forEach(option => {
-      option.addEventListener("click", () => {
-        const moodFile = option.dataset.moodFile;
-        const moodName = moodNames[moodFile];
-        console.log('MOODFILE' + moodFile);
-        // Сохраняем настроение
-        saveMoodWithFile(date, moodFile)
-          .then(() => {
-            // Обновляем отображение настроения
-            moodElement.src = `/static/frontend/images/${moodFile}`;
-            moodElement.alt = moodName;
-            moodElement.classList.remove('mood-placeholder');
+        option.addEventListener("click", () => {
+            const moodFile = option.dataset.moodFile;
+            const moodKey = Object.keys(moodFileMap).find(key => moodFileMap[key] === moodFile);
+            const moodName = moodDisplayNames[moodKey];
 
-            // Перезагружаем данные настроений
-            return fetch('/api/daily_mood/');
-          })
-          .then(response => response.json())
-          .then(data => {
-            dailyMoods = data;
-            popup.remove();
-          })
-          .catch(error => {
-            console.error('Ошибка сохранения настроения:', error);
-            popup.remove();
-          });
-      });
+            console.log('MOODFILE', moodFile);
+            console.log('Mood key:', moodKey);
+            console.log('Mood name:', moodName);
+
+            // Сохраняем настроение
+            saveMoodWithFile(date, moodFile)
+                .then(() => {
+                    // Обновляем отображение настроения
+                    moodElement.src = `/static/frontend/images/${moodFile}`;
+                    moodElement.alt = moodName;
+                    moodElement.classList.remove('mood-placeholder');
+
+                    // Перезагружаем данные настроений
+                    return fetch('/api/daily_mood/');
+                })
+                .then(response => response.json())
+                .then(data => {
+                    dailyMoods = data;
+                    popup.remove();
+                })
+                .catch(error => {
+                    console.error('Ошибка сохранения настроения:', error);
+                    popup.remove();
+                });
+        });
     });
 
     // Закрытие попапа
     popup.querySelector(".close-popup").addEventListener("click", () => {
-      popup.remove();
+        popup.remove();
     });
 
     // Закрытие по клику вне попапа
     popup.addEventListener("click", (e) => {
-      if (e.target === popup) {
-        popup.remove();
-      }
+        if (e.target === popup) {
+            popup.remove();
+        }
     });
-  }
+}
 
-  // Сохраняем настроение с именем файла
- function saveMoodWithFile(date, moodFile) {
-  const userId = getUserId();
-  if (!userId) return Promise.reject('Пользователь не авторизован');
 
-  // Сопоставление файлов с названиями настроений на английском (как в базе данных)
-  const moodFileToName = {
-    "happy.svg": "Happy",
-    "calm.svg": "Relaxed",
-    "sad.svg": "Sad",
-    "angry.svg": "Angry",
-    "excited.svg": "Excited",
-    "anxious.svg": "Bored"
-  };
+ // Сохраняем настроение с именем файла
+function saveMoodWithFile(date, moodFile) {
+    const userId = getUserId();
+    if (!userId) return Promise.reject('Пользователь не авторизован');
 
-  const moodName = moodFileToName[moodFile];
+     console.log('Сохранение настроения:', date, moodFile);
 
-  if (!moodName) {
-    return Promise.reject('Настроение не найдено для файла: ' + moodFile);
-  }
+    // Сопоставление файлов с названиями настроений на английском (как в базе данных)
+    const moodFileToName = {
+        "happy.svg": "Happy",
+        "relaxed.svg": "Relaxed", // соответствует "Relaxed" в БД
+        "sad.svg": "Sad",
+        "angry.svg": "Angry",
+        "excited.svg": "Anxious",
+        "bored.svg": "Calm" // соответствует "Bored" в БД
+    };
 
-  // Ищем настроение по имени
-  const mood = moods.find(m => m.name === moodName);
+    const moodName = moodFileToName[moodFile];
 
-  if (!mood) {
-    console.error('Настроение не найдено в базе данных:', moodName, 'Доступные настроения:', moods);
-    return Promise.reject('Настроение "' + moodName + '" не найдено в базе данных');
-  }
+    if (!moodName) {
+        console.error('Настроение не найдено для файла:', moodFile);
+        return Promise.reject('Настроение не найдено для файла: ' + moodFile);
+    }
 
-  const existingMood = getMoodForDate(date);
+    console.log('Ищем настроение в базе:', moodName);
 
-  if (existingMood) {
-    // Обновляем существующее настроение
-    return fetch(`/api/daily_mood/${existingMood.id}/`, {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCSRFToken()
-      },
-      body: JSON.stringify({ mood: mood.id })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Ошибка обновления настроения: ' + response.status);
-      }
-      return response.json();
-    });
-  } else {
-    // Создаем новое настроение
-    return fetch('/api/daily_mood/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCSRFToken()
-      },
-      body: JSON.stringify({
-        date: date,
-        mood: mood.id
-      })
-    })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error('Ошибка создания настроения: ' + response.status);
-      }
-      return response.json();
-    });
-  }
+    // Ищем настроение по имени
+    const mood = moods.find(m => m.name === moodName);
+
+    if (!mood) {
+        console.error('Настроение не найдено в базе данных:', moodName, 'Доступные настроения:', moods);
+        return Promise.reject('Настроение "' + moodName + '" не найдено в базе данных');
+    }
+
+    console.log('Найдено настроение ID:', mood.id);
+
+    const existingMood = getMoodForDate(date);
+    console.log('Существующее настроение для даты', date, ':', existingMood);
+
+    if (existingMood) {
+        // Обновляем существующее настроение через PATCH
+        console.log('Обновляем существующее настроение ID:', existingMood.id);
+        return fetch(`/api/daily_mood/${existingMood.id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({ mood: mood.id })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Ошибка обновления настроения: ${response.status} - ${text}`);
+                });
+            }
+            return response.json();
+        });
+    } else {
+        // Создаем новое настроение через POST
+        console.log('Создаем новое настроение для даты:', date);
+        return fetch('/api/daily_mood/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCSRFToken()
+            },
+            body: JSON.stringify({
+                date: date,
+                mood: mood.id
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                return response.text().then(text => {
+                    throw new Error(`Ошибка создания настроения: ${response.status} - ${text}`);
+                });
+            }
+            return response.json();
+        });
+    }
 }
 
   // Переключение месяцев

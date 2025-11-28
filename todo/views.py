@@ -1,8 +1,9 @@
 from rest_framework import status
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .models import Mood, Image, Task, DailyMood, User
 from .serializers import MoodSerializer, ImageSerializer, TaskSerializer, DailyMoodSerializer, CustomUserSerializer
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, parser_classes
 
 
 @api_view(['GET', 'POST'])
@@ -97,6 +98,8 @@ def task_detail(request, pk):
     elif request.method == 'DELETE':
         task.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 @api_view(['GET', 'POST'])
 def daily_mood_list(request):
     if request.method == 'GET':
@@ -107,7 +110,6 @@ def daily_mood_list(request):
         try:
             user = User.objects.get(id=user_id)
             daily_moods = DailyMood.objects.filter(user=user)
-            # Сериализатор должен включать информацию о настроении
             serializer = DailyMoodSerializer(daily_moods, many=True)
             return Response(serializer.data)
         except User.DoesNotExist:
@@ -120,13 +122,31 @@ def daily_mood_list(request):
 
         try:
             user = User.objects.get(id=user_id)
-            serializer = DailyMoodSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save(user=user)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+            # Проверяем, существует ли уже запись для этой даты и пользователя
+            date = request.data.get('date')
+            existing_mood = DailyMood.objects.filter(user=user, date=date).first()
+
+            if existing_mood:
+                # Если запись уже существует, обновляем её
+                serializer = DailyMoodSerializer(existing_mood, data=request.data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status=status.HTTP_200_OK)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                # Если записи нет, создаём новую
+                serializer = DailyMoodSerializer(data=request.data)
+                if serializer.is_valid():
+                    serializer.save(user=user)
+                    return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
         except User.DoesNotExist:
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        except Exception:
+            return Response({'error': 'Mood entry already exists for this date and user'},
+                            status=status.HTTP_400_BAD_REQUEST)
     
 
 @api_view(['POST'])
@@ -202,5 +222,93 @@ def create_session(request):
         request.session['username'] = user.username
         request.session['email'] = user.email
         return Response({'message': 'Session created successfully'})
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['GET', 'PUT', 'PATCH'])
+@parser_classes([MultiPartParser, FormParser])
+def user_profile(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        user = User.objects.get(id=user_id)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        data = {
+            'id': user.id,
+            'username': user.username,
+            'email': user.email,
+            'avatar_url': user.get_absolute_avatar_url(request),
+            # Используем метод с request
+        }
+        return Response(data)
+
+    elif request.method == 'PATCH':
+        if 'avatar' in request.FILES:
+            user.avatar = request.FILES['avatar']
+            user.save()
+
+            data = {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'avatar_url': user.get_absolute_avatar_url(request)  # Используем метод с request
+            }
+            return Response(data)
+        else:
+            return Response({'error': 'No avatar file provided'}, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'PUT', 'PATCH', 'DELETE'])
+def daily_mood_detail(request, pk):
+    """
+    Retrieve, update or delete a daily mood instance.
+    """
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        user = User.objects.get(id=user_id)
+        daily_mood = DailyMood.objects.get(pk=pk, user=user)
+    except DailyMood.DoesNotExist:
+        return Response({'error': 'Daily mood not found'}, status=status.HTTP_404_NOT_FOUND)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = DailyMoodSerializer(daily_mood)
+        return Response(serializer.data)
+
+    elif request.method in ['PUT', 'PATCH']:
+        partial = request.method == 'PATCH'
+        serializer = DailyMoodSerializer(daily_mood, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        daily_mood.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+@api_view(['DELETE'])
+def delete_avatar(request):
+    user_id = request.session.get('user_id')
+    if not user_id:
+        return Response({'error': 'User not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
+    try:
+        user = User.objects.get(id=user_id)
+        if user.avatar:
+            # Удаляем файл аватара
+            user.avatar.delete(save=False)
+            user.avatar = None
+            user.save()
+            return Response({'message': 'Аватар удален'})
+        return Response({'message': 'Аватар уже отсутствует'})
     except User.DoesNotExist:
         return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)

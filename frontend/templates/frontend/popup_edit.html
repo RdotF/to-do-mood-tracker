@@ -8,16 +8,27 @@
         alt="Logo"
         class="logo"
       />
-      <button class="close-btn" type="button">×</button>
+      <button class="close-btn" type="button" id="btn-close">×</button>
     </div>
 
     <!-- Фото -->
-    <div class="photo-placeholder"><span>Место для вашего фото</span></div>
+    <div class="photo-placeholder" id="popup-avatar">
+    </div>
 
     <!-- Форма -->
     <form class="form">
       <div class="input-group">
-        <input type="text" placeholder="Имя" />
+        <input type="text" placeholder="Логин" id="edit-name" />
+        <img
+          src="{% static 'frontend/images/pencil.svg' %}"
+          alt="Edit"
+          class="icon"
+        />
+      </div>
+
+
+      <div class="input-group">
+        <input type="password" placeholder="Пароль" id="edit-password" />
         <img
           src="{% static 'frontend/images/pencil.svg' %}"
           alt="Edit"
@@ -26,16 +37,7 @@
       </div>
 
       <div class="input-group">
-        <input type="text" placeholder="Логин" />
-        <img
-          src="{% static 'frontend/images/pencil.svg' %}"
-          alt="Edit"
-          class="icon"
-        />
-      </div>
-
-      <div class="input-group">
-        <input type="password" placeholder="Пароль" />
+        <input type="password" placeholder="Повторите пароль" id="edit-password-repeat" />
         <img
           src="{% static 'frontend/images/pencil.svg' %}"
           alt="Edit"
@@ -45,5 +47,6 @@
 
       <button type="submit" class="btn-save">Сохранить</button>
     </form>
+     <script src="{% static 'frontend/js/popup_edit.js' %}"></script>
   </div>
 </div>

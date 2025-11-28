@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Настроение</title>
-    <link rel="stylesheet" href="{% static 'frontend/css/mood.css' %}" />
+    <link rel="stylesheet" href="{% static 'frontend/css/mood1.css' %}" />
     <link
       href="https://fonts.googleapis.com/css2?family=Marmelad&family=Roboto:wght@400;500&display=swap"
       rel="stylesheet"
@@ -56,9 +56,9 @@
     <div class="main-content">
       <h1 class="page-title">Настроение дня</h1>
       <div class="date-row">
-<div class="day-box">{{ today_weekday }}</div>  <!-- день недели -->
-  <div class="date-box">{{ today_date|date:"d.m" }}</div>  <!-- дата -->
-</div>
+        <div class="day-box" id="currentDay">Пятница</div>
+        <div class="date-box" id="currentDate">18.10</div>
+      </div>
       <div class="mood-section">
         <div class="mood-left">
           <h2 class="mood-question">
@@ -78,12 +78,12 @@
               class="mood-btn"
             />
             <img
-              src="{% static 'frontend/images/calm.svg' %}"
+              src="{% static 'frontend/images/relaxed.svg' %}"
               alt="Calm"
               class="mood-btn"
             />
             <img
-              src="{% static 'frontend/images/anxious.svg' %}"
+              src="{% static 'frontend/images/bored.svg' %}"
               alt="Anxious"
               class="mood-btn"
             />
@@ -106,8 +106,12 @@
           </div>
         </div>
       </div>
+      <div id="user-data"
+         data-user-id="{{ request.session.user_id }}"
+         style="display: none;">
+    </div>
     </div>
     <footer><p>© 2025 To-Do Mood Tracker</p></footer>
-    <script src="{% static 'frontend/js/mood.js' %}"></script>
+    <script src="{% static 'frontend/js/mood1.js' %}"></script>
   </body>
 </html>

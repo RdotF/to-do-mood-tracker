@@ -154,7 +154,7 @@ body {
 }
 #mood-image {
   max-width: 90%;
-  max-height: 90%;
+  max-height: 80%;
 }
 .hidden {
   display: none;

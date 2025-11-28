@@ -6,6 +6,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const logoutBtn = document.getElementById('logoutBtn');
     const userStats = document.getElementById('userStats');
 
+    // Элемент аватарки (только для отображения)
+    const userAvatar = document.getElementById('user-avatar');
+
+    // Элементы для попапа редактирования
+    const editBtn = document.querySelector('.btn-change');
+    const editOverlay = document.querySelector('.edit-overlay');
+
     // Функция для получения данных пользователя из data-атрибутов
     function getUserData() {
         const userDataElement = document.getElementById('user-data');
@@ -17,19 +24,63 @@ document.addEventListener('DOMContentLoaded', function() {
         return {
             username: userDataElement.dataset.username || '',
             email: userDataElement.dataset.email || '',
-            userId: userDataElement.dataset.userId || ''
+            userId: userDataElement.dataset.userId || '',
+            avatarUrl: userDataElement.dataset.avatarUrl || ''
         };
     }
 
-    // Функция для обновления данных пользователя
-    function updateUserData() {
-        // Получаем данные из data-атрибутов
-        const userData = getUserData();
+    // Функция для получения CSRF токена
+    function getCSRFToken() {
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        return csrfToken ? csrfToken.value : '';
+    }
+
+    // Функция для загрузки актуальных данных пользователя с сервера
+    async function loadUserProfile() {
+        try {
+            const response = await fetch('/api/user/profile/', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken()
+                }
+            });
+
+            if (response.ok) {
+                const userData = await response.json();
+                console.log('Данные пользователя с сервера:', userData);
+
+                // Обновляем отображение
+                updateUserDisplay(userData);
+
+                // Обновляем localStorage
+                if (userData.id) {
+                    localStorage.setItem('user_id', userData.id);
+                    localStorage.setItem('username', userData.username);
+                    localStorage.setItem('email', userData.email);
+                    localStorage.setItem('avatar_url', userData.avatar_url || '');
+                }
+
+                return userData;
+            } else {
+                console.error('Ошибка загрузки профиля:', response.status);
+                // Если API недоступно, используем данные из data-атрибутов
+                updateUserData();
+            }
+        } catch (error) {
+            console.error('Ошибка загрузки профиля:', error);
+            // Если произошла ошибка, используем данные из data-атрибутов
+            updateUserData();
+        }
+    }
+
+    // Функция для обновления отображения данных пользователя
+    function updateUserDisplay(userData) {
         const username = userData.username;
         const email = userData.email;
-        const userId = userData.userId;
+        const userId = userData.id;
+        const avatarUrl = userData.avatar_url;
 
-        console.log('Данные пользователя:', userData);
 
         // Обновляем отображение только если данные есть
         if (username && username !== 'логин' && usernameDisplay) {
@@ -44,12 +95,23 @@ document.addEventListener('DOMContentLoaded', function() {
             userIdDisplay.textContent = `ID: ${userId}`;
         }
 
-        // Также обновляем localStorage для согласованности
-        if (userId) {
-            localStorage.setItem('user_id', userId);
-            localStorage.setItem('username', username);
-            localStorage.setItem('email', email);
-            localStorage.setItem('is_authenticated', 'true');
+        // Обновляем аватарку если есть
+        if (userAvatar) {
+            if (avatarUrl) {
+                console.log('Устанавливаем аватарку:', avatarUrl);
+                userAvatar.src = avatarUrl;
+                userAvatar.alt = `Аватар ${username}`;
+            } else {
+
+                userAvatar.src = '/static/frontend/images/themesdark.svg';
+                userAvatar.alt = 'Аватар по умолчанию';
+            }
+
+            // Добавляем обработчик ошибок загрузки изображения
+            userAvatar.onerror = function() {
+                console.error('Ошибка загрузки аватарки:', this.src);
+                this.src = '/static/frontend/images/themesdark.svg';
+            };
         }
 
         // Обновляем title страницы
@@ -58,70 +120,50 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция для загрузки статистики пользователя
-    function loadUserStats() {
+    // Функция для обновления данных пользователя (из data-атрибутов)
+    function updateUserData() {
+        // Получаем данные из data-атрибутов
         const userData = getUserData();
-        const userId = userData.userId;
+        updateUserDisplay(userData);
 
-        if (!userId) {
-            console.log('ID пользователя не найден для загрузки статистики');
-            return;
+        // Также обновляем localStorage для согласованности
+        if (userData.userId) {
+            localStorage.setItem('user_id', userData.userId);
+            localStorage.setItem('username', userData.username);
+            localStorage.setItem('email', userData.email);
+            localStorage.setItem('avatar_url', userData.avatarUrl);
+            localStorage.setItem('is_authenticated', 'true');
         }
-
-        // Временная заглушка для статистики
-        if (userStats) {
-            userStats.innerHTML = `
-                <div class="stat-item">
-                    <span>Задач выполнено: 0</span>
-                </div>
-                <div class="stat-item">
-                    <span>Среднее настроение: Н/Д</span>
-                </div>
-                <div class="stat-item">
-                    <span>Активных задач: 0</span>
-                </div>
-                <div class="stat-note">
-                    <p><small>Статистика появится после использования приложения</small></p>
-                </div>
-            `;
-        }
-
-        // Раскомментируйте когда будет API для статистики:
-        /*
-        fetch(`/api/user/${userId}/stats/`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Статистика недоступна');
-                }
-                return response.json();
-            })
-            .then(stats => {
-                if (userStats && stats.data) {
-                    userStats.innerHTML = `
-                        <div class="stat-item">
-                            <span>Задач выполнено: ${stats.completed_tasks || 0}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>Среднее настроение: ${stats.average_mood || 'Н/Д'}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span>Активных задач: ${stats.active_tasks || 0}</span>
-                        </div>
-                    `;
-                }
-            })
-            .catch(error => {
-                console.log('Статистика пока недоступна');
-                if (userStats) {
-                    userStats.innerHTML = `
-                        <div class="stat-placeholder">
-                            <p>Статистика появится после использования приложения</p>
-                        </div>
-                    `;
-                }
-            });
-        */
     }
+
+    // Функция для загрузки статистики пользователя
+//    /*function loadUserStats() {
+//        const userData = getUserData();
+//        const userId = userData.userId;
+//
+//        if (!userId) {
+//            console.log('ID пользователя не найден для загрузки статистики');
+//            return;
+//        }
+//
+//        // Временная заглушка для статистики
+//        if (userStats) {
+//            userStats.innerHTML = `
+//                <div class="stat-item">
+//                    <span>Задач выполнено: 0</span>
+//                </div>
+//                <div class="stat-item">
+//                    <span>Среднее настроение: Н/Д</span>
+//                </div>
+//                <div class="stat-item">
+//                    <span>Активных задач: 0</span>
+//                </div>
+//                <div class="stat-note">
+//                    <p><small>Статистика появится после использования приложения</small></p>
+//                </div>
+//            `;
+//        }
+//    }*/
 
     // Функция для выхода
     function setupLogout() {
@@ -142,6 +184,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             localStorage.removeItem('user_id');
                             localStorage.removeItem('username');
                             localStorage.removeItem('email');
+                            localStorage.removeItem('avatar_url');
                             localStorage.removeItem('is_authenticated');
 
                             // Перенаправляем на главную
@@ -161,37 +204,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // Функция для получения CSRF токена
-    function getCSRFToken() {
-    // Способ 1: Из формы с csrfmiddlewaretoken
-    let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
-    if (csrfToken) {
-        return csrfToken.value;
-    }
-
-    // Способ 2: Из cookies
-    const name = 'csrftoken';
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-
-    if (cookieValue) {
-        console.log('CSRF токен найден в cookies:', cookieValue);
-        return cookieValue;
-    }
-
-    console.error('CSRF токен не найден');
-    return '';
-}
-
     // Функция для проверки авторизации
     function checkAuthentication() {
         const userData = getUserData();
@@ -203,6 +215,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('user_id', sessionUserId);
             localStorage.setItem('username', userData.username);
             localStorage.setItem('email', userData.email);
+            localStorage.setItem('avatar_url', userData.avatarUrl);
             localStorage.setItem('is_authenticated', 'true');
         }
 
@@ -211,6 +224,7 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('user_id', sessionUserId);
             localStorage.setItem('username', userData.username);
             localStorage.setItem('email', userData.email);
+            localStorage.setItem('avatar_url', userData.avatarUrl);
         }
 
         // Если пользователь не авторизован - перенаправляем
@@ -220,16 +234,43 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Настройка попапа редактирования (только открытие)
+    function setupEditPopup() {
+        if (!editBtn) {
+            console.warn("Кнопка редактирования не найдена");
+            return;
+        }
+        if (!editOverlay) {
+            console.warn("Оверлей попапа не найден");
+            return;
+        }
+
+        // Открытие попапа
+        editBtn.addEventListener('click', () => {
+            console.log('Открытие попапа редактирования');
+            editOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+    }
+
     // Инициализация
     function init() {
         console.log('Инициализация профиля...');
-        updateUserData();
         checkAuthentication();
         setupLogout();
-        loadUserStats();
+        //loadUserStats();
+        setupEditPopup();
+
+        // Загружаем актуальные данные с сервера
+        loadUserProfile().then(userData => {
+            console.log('Профиль успешно загружен:', userData);
+        }).catch(error => {
+            console.error('Ошибка загрузки профиля:', error);
+            // Если API недоступно, используем данные из data-атрибутов
+            updateUserData();
+        });
     }
 
     // Запускаем инициализацию
     init();
 });
-
