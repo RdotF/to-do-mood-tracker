@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background: linear-gradient(135deg, #faf4e4 32%, #bdd1d2 68%);
+  color: #474643;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* текст сверху */
+  padding: 50px 100px; /* отступ сверху и по бокам */
+  box-sizing: border-box;
+  /* убрали min-height: 100vh */
+}
+
+/* Заголовки */
+h1 {
+  font-family: "Marmelad", sans-serif;
+  font-size: 95px;
+  margin: 0 0 30px 0;
+  text-align: left;
+  color: #474643;
+}
+
+h2 {
+  font-family: "Roboto", sans-serif;
+  font-size: 50px;
+  font-weight: 400;
+  margin: 0 0 40px 0;
+  text-align: left;
+  color: #474643;
+}
+
+.description {
+  font-size: 35px;
+  line-height: 1.5;
+  max-width: 1000px;
+  text-align: left;
+  color: #474643;
+}
+
+/* --- Блок кнопок --- */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: -15px; /* расстояние между кнопками */
+  align-items: flex-end; /* кнопки справа */
+  margin-top: -40px; /* отступ от текста */
+}
+
+/* Кнопки */
+.btn {
+  border: none;
+  border-radius: 40px;
+  font-family: "Marmelad", sans-serif;
+  color: #474643;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-register {
+  width: 506px;
+  height: 80px;
+  background-color: #c4b0b2;
+  font-size: 30px;
+}
+
+.btn-login {
+  width: 228px;
+  height: 80px;
+  background-color: #faf4e4;
+  font-size: 30px;
+}
+
+/* Hover эффект */
+.btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+}
+
+/* Футер */
+footer {
+  background-color: #ffffff;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #474643;
+  font-family: "Roboto", sans-serif;
+}

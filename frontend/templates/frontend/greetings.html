@@ -1,0 +1,49 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Сделай свой день ярче</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marmelad&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{% static 'frontend/css/greetings.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'frontend/css/popup_registration.css' %}"
+    />
+    <!-- 👈 Добавлено -->
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Сделай свой день ярче</h1>
+        <h2>Вместе с нами</h2>
+      </header>
+      <main>
+        <p class="description">
+          <strong>MindFlow</strong>  помогает не просто планировать задачи — он показывает, как ваши дела влияют на настроение, фокус и общее состояние. Благодаря умному трекеру настроений и удобной системе планирования вы начинаете лучше понимать себя, видеть реальные паттерны и каждый день становиться продуктивнее, спокойнее и увереннее в своих шагах.
+Попробуйте полный функционал MindFlow бесплатно и почувствуйте разницу уже в первую неделю.
+        </p>
+      </main>
+      <div class="actions">
+        <button class="btn btn-register" id="openRegistration">
+          Зарегистрироваться
+        </button>
+        <button class="btn btn-login">Войти</button>
+      </div>
+    </div>
+
+    <footer><p>© 2025 To-Do Mood Tracker</p></footer>
+
+    {% include 'frontend/popup_registration.html' %}
+
+    <script src="{% static 'frontend/js/popup_registration.js' %}"></script>
+
+    {% include 'frontend/popup_login.html' %}
+    <link rel="stylesheet" href="{% static 'frontend/css/popup_login.css' %}" />
+    <script src="{% static 'frontend/js/popup_login.js' %}"></script>
+  </body>
+</html>

@@ -1,0 +1,139 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Личный кабинет - {{ username }}</title>
+
+    <!-- Основные стили -->
+    <link rel="stylesheet" href="{% static 'frontend/css/profile.css' %}" />
+    <!-- Попап -->
+    <link rel="stylesheet" href="{% static 'frontend/css/popup_edit.css' %}" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marmelad&family=Roboto:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+  <!-- Скрытый элемент с данными пользователя -->
+    <div id="user-data"
+         data-user-id="{{ user.id }}"
+         data-username="{{ user.username }}"
+         data-email="{{ user.email }}"
+         data-avatar-url="{{ user.get_absolute_avatar_url }}">
+    </div>
+    <!-- Левое меню -->
+    <div class="sidebar">
+      <img
+        src="{% static 'frontend/images/logobig.svg' %}"
+        alt="Logo"
+        class="logo"
+      />
+
+      <!-- Название активной страницы -->
+      <h2 class="sidebar-title">Профиль</h2>
+
+      <!-- Меню -->
+      <div class="menu">
+        <a href="{% url 'todo' %}">
+          <img
+            src="{% static 'frontend/images/todo.svg' %}"
+            alt="ToDo"
+            class="menu-icon"
+          />
+        </a>
+
+        <a href="{% url 'mood' %}">
+          <img
+            src="{% static 'frontend/images/mood.svg' %}"
+            alt="Mood"
+            class="menu-icon"
+          />
+        </a>
+
+        <a href="{% url 'calendar' %}">
+          <img
+            src="{% static 'frontend/images/calendar.svg' %}"
+            alt="Calendar"
+            class="menu-icon"
+          />
+        </a>
+      </div>
+
+      <!-- кот под меню -->
+      <img
+        src="{% static 'frontend/images/catlk.svg' %}"
+        alt="Cat"
+        class="menu-cat"
+      />
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-content">
+      <div class="header">
+        <h1>Личный кабинет</h1>
+        <div class="header-buttons">
+          <!--<img
+            src="{% static 'frontend/images/themesdark.svg' %}"
+            alt="Themes"
+            class="header-icon"
+          /> -->
+
+          <!-- интерактивная кнопка -->
+          <button
+            class="btn-change"
+            aria-label="Редактировать профиль"
+            type="button"
+          >
+            <img
+              src="{% static 'frontend/images/change.svg' %}"
+              alt="Change"
+              class="header-icon-img"
+            />
+          </button>
+
+          <button class="btn-logout" id="logoutBtn">Выйти</button>
+        </div>
+      </div>
+
+      <!-- Данные пользователя -->
+      <div class="user-info">
+        <!-- Добавлен ID для обновления аватарки -->
+        <img
+          src="{% if user.avatar %}{{ user.get_absolute_avatar_url }}{% else %}{% static 'frontend/images/themesdark.svg' %}{% endif %}"
+          class="user-photo"
+          id="user-avatar"
+
+        />
+        <div class="user-text">
+          <!-- Реальные данные из сессии -->
+          <h2 class="user-name" id="usernameDisplay">{{ user.username|default:"логин" }}</h2>
+          <p class="user-login" id="emailDisplay">{{ user.email|default:"почта" }}</p>
+        </div>
+      </div>
+
+
+      <h2 class="week-subtitle">Вот как прошла твоя неделя</h2>
+
+      <!-- Статистика -->
+      <div class="stats-frame">
+        <p>Статистика настроения пользователя</p>
+        <div id="userStats">
+          <!-- Динамическая статистика будет здесь -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Футер -->
+    <footer>
+      <p>© 2025 To-Do Mood Tracker</p>
+    </footer>
+
+    {% include 'frontend/popup_edit.html' %}
+    <script src="{% static 'frontend/js/profile.js' %}"></script>
+
+  </body>
+</html>

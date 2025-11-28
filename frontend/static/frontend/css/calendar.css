@@ -1,0 +1,316 @@
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+  background: #faf4e4;
+}
+
+/* --- Меню слева --- */
+.sidebar {
+  position: absolute;
+  top: 105px;
+  left: 100px;
+  width: 190px;
+  height: 487px;
+  background-color: #878fa2;
+  border-radius: 40px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 110px;
+  height: 110px;
+  margin-bottom: 19px;
+}
+
+.sidebar-title {
+  font-family: "Marmelad", sans-serif;
+  font-size: 32px;
+  font-weight: normal; /* не жирный */
+  color: #fff;
+  margin: -5px;
+}
+
+/* Меню */
+.menu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.menu-icon {
+  width: 83px;
+  cursor: pointer;
+}
+
+.menu-cat {
+  width: 190px;
+  height: 190px;
+  display: block;
+  margin-top: 15px;
+  object-fit: contain;
+}
+
+/* --- Контент --- */
+.main-content {
+  margin-left: 370px;
+  margin-right: 100px;
+  margin-top: 50px;
+  margin-bottom: 100px;
+}
+
+.page-title {
+  font-family: "Marmelad", sans-serif;
+  font-size: 70px;
+  color: #474643;
+  margin: 0;
+  margin-bottom: 40px;
+}
+
+.month-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* заголовок слева */
+  margin-bottom: 20px;
+}
+
+.month-btn {
+  margin-left: auto; /* отодвигаем кнопку вправо */
+  margin-right: 100px; /* от края страницы 100px */
+  height: 85px;
+  background-color: #c4b0b2;
+  color: #474643;
+  font-size: 40px;
+  font-family: "Marmelad", sans-serif;
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  cursor: pointer;
+}
+
+.arrow {
+  font-size: 35px; /* треугольники */
+  user-select: none;
+}
+
+/* --- Окошко календаря --- */
+.calendar-outer {
+  width: 1205px; /* отступ 100px справа */
+  background: linear-gradient(90deg, #c4b0b2 25%, #faf4e4 50%, #bdd1d2 75%);
+  border-radius: 40px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.calendar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  font-family: "Marmelad", sans-serif;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 15px;
+}
+
+.day-box {
+  background-color: #fff;
+  border-radius: 20px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-height: 150px;
+  position: relative;
+}
+
+.day-number {
+  font-family: "Marmelad", sans-serif;
+  font-weight: normal; /* не жирный */
+  color: #474643;
+  font-size: 24px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+
+
+.day-tasks {
+  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.day-tasks li {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.task-bullet {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #474643;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.task-bullet.checked {
+  background-color: #474643;
+}
+
+.task-text.checked {
+  text-decoration: line-through;
+  color: #a6a6a6;
+}
+
+footer {
+  height: 100px;
+  background-color: #fff;
+  text-align: center;
+  font-size: 18px;
+  color: #474643;
+  font-family: "Roboto", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+.day-mood {
+  cursor: pointer;
+  transition: transform 0.2s;
+  width: 32px;
+  height: 32px;
+  display: block;
+  margin-top: 5px;
+  border-radius: 50%;
+  margin-right: auto;
+  margin-left: 0;
+}
+
+.day-mood:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
+.mood-placeholder {
+  opacity: 0.6;
+  border: 2px dashed #ccc;
+  padding: 3px;
+
+}
+
+.mood-placeholder:hover {
+  opacity: 1;
+  border-color: #ece1d6;
+  border: 2px solid #ece1d6;
+
+}
+
+/* Стили для попапа выбора настроения */
+.mood-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.mood-popup-content {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.mood-popup-content h3 {
+  margin-top: 0;
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.mood-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.mood-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f9f9f9;
+}
+
+.mood-option:hover {
+  background-color: #f0f0f0;
+  border-color: #667eea;
+  transform: translateY(-2px);
+}
+
+.mood-option img {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 8px;
+  border-radius: 50%;
+}
+
+.mood-option span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  text-align: center;
+}
+
+.close-popup {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.close-popup:hover {
+  background: #5a6fd8;
+}
